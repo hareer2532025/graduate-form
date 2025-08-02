@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>استبيان خريجي ناحية العباسي</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            font-family: 'Tajawal', sans-serif;
+        }
+        .main-container {
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            margin-top: 50px;
+            margin-bottom: 50px;
+        }
+        .header {
+            background: linear-gradient(to right, #3a7bd5, #00d2ff);
+            color: white;
+            padding: 30px 0;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .header h1 {
+            font-weight: 700;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            position: relative;
+            z-index: 2;
+        }
+        .header::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="none"><polygon fill="rgba(255,255,255,0.1)" points="0,100 100,0 100,100"/></svg>');
+            background-size: cover;
+            opacity: 0.5;
+        }
+        .option-card {
+            border: none;
+            border-radius: 15px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            height: 100%;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        .option-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+        }
+        .option-card.view {
+            background: linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%);
+        }
+        .option-card.register {
+            background: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 100%);
+        }
+        .option-card i {
+            font-size: 3rem;
+            margin-bottom: 20px;
+        }
+        .footer {
+            background-color: rgba(0, 0, 0, 0.05);
+            padding: 20px 0;
+            text-align: center;
+            border-top: 1px solid rgba(0, 0, 0, 0.1);
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <div class="container main-container animate__animated animate__fadeIn">
+        <div class="header">
+            <h1 class="animate__animated animate__fadeInDown">استبيان خريجي ناحية العباسي</h1>
+        </div>
+        
+        <div class="container py-5">
+            <div class="row g-4">
+                <div class="col-md-6">
+                    <div class="option-card view p-5 text-center text-white animate__animated animate__fadeInLeft" onclick="window.location.href='index33.html'">
+                        <i class="fas fa-chart-bar"></i>
+                        <h3>مشاهدة نتائج الاستبيان</h3>
+                        <p>عرض الإحصائيات والبيانات المجمعة لخريجي الناحية</p>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="option-card register p-5 text-center text-white animate__animated animate__fadeInRight" id="registerBtn">
+                        <i class="fas fa-user-edit"></i>
+                        <h3>التسجيل في الاستبيان</h3>
+                        <p>سجل بياناتك كخريج من ناحية العباسي</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>جميع الحقوق محفوظة © 2025 - ناحية العباسي</p>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-auth-compat.js"></script>
+    
+    <script>
+        // التكوين المشفر لـ Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyDelY9ctu3sfyML_rK0aUtXoRCmRkvZK1U",
+            authDomain: "hareer1wissam.firebaseapp.com",
+            projectId: "hareer1wissam"
+        };
+        
+        // تهيئة Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        const auth = firebase.auth();
+        
+        // إنشاء معرف فريد للمستخدم
+        function getUserId() {
+            let userId = localStorage.getItem('graduate_user_id');
+            if (!userId) {
+                userId = 'user_' + Math.random().toString(36).substr(2, 9);
+                localStorage.setItem('graduate_user_id', userId);
+            }
+            return userId;
+        }
+        
+        // التحقق مما إذا كان المستخدم قد سجل بالفعل
+        document.addEventListener('DOMContentLoaded', function() {
+            const userId = getUserId();
+            const registerBtn = document.getElementById('registerBtn');
+            
+            db.collection("graduates").where("userId", "==", userId).get()
+                .then((querySnapshot) => {
+                    if (!querySnapshot.empty) {
+                        registerBtn.onclick = function() {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'عذراً',
+                                text: 'لا يمكن التسجيل أكثر من مرة. يمكنك فقط مشاهدة نتائج الاستبيان.',
+                                confirmButtonText: 'حسناً'
+                            });
+                        };
+                        registerBtn.style.opacity = '0.7';
+                        registerBtn.style.cursor = 'not-allowed';
+                    } else {
+                        registerBtn.onclick = function() {
+                            window.location.href = 'index2.html';
+                        };
+                    }
+                })
+                .catch((error) => {
+                    console.error("Error checking registration: ", error);
+                });
+        });
+    </script>
+    
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

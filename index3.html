@@ -1,0 +1,944 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>الإحصائيات - خريجو ناحية العباسي</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            font-family: 'Tajawal', sans-serif;
+        }
+        .header {
+            background: linear-gradient(to right, #3a7bd5, #00d2ff);
+            color: white;
+            padding: 30px 0;
+            margin-bottom: 30px;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        .header h1 {
+            font-weight: 700;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        .stat-card {
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+            overflow: hidden;
+            transition: transform 0.3s;
+        }
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+        .stat-card-header {
+            background: linear-gradient(to right, #4b6cb7, #182848);
+            color: white;
+            padding: 15px 20px;
+            font-weight: 600;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .stat-card-body {
+            padding: 20px;
+            position: relative;
+        }
+        .table-responsive {
+            margin-top: 15px;
+        }
+        .table th {
+            background-color: #f8f9fa;
+            font-weight: 600;
+        }
+        .print-btn {
+            background: #28a745;
+            border: none;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .print-btn:hover {
+            background: #218838;
+            transform: scale(1.05);
+        }
+        .back-btn {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background: #6c757d;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            font-size: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+        .back-btn:hover {
+            background: #5a6268;
+            transform: scale(1.1);
+        }
+        .chart-container {
+            height: 300px;
+            margin-top: 20px;
+        }
+        .loading-spinner {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 200px;
+        }
+        .spinner-border {
+            width: 3rem;
+            height: 3rem;
+        }
+        .no-data-message {
+            display: none;
+            text-align: center;
+            padding: 20px;
+            background-color: #f8f9fa;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+        .btn-delete {
+            padding: 0.25rem 0.5rem;
+            font-size: 0.875rem;
+        }
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+            .stat-card, .stat-card * {
+                visibility: visible;
+            }
+            .stat-card {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                box-shadow: none;
+                page-break-after: always;
+            }
+            .print-btn, .back-btn, .btn-delete {
+                display: none !important;
+            }
+            .no-data-message {
+                display: none !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="container">
+            <h1 class="animate__animated animate__fadeInDown">الإحصائيات - خريجو ناحية العباسي</h1>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- بطاقة أعلى 20 معدل -->
+        <div class="stat-card animate__animated animate__fadeIn">
+            <div class="stat-card-header">
+                <span><i class="fas fa-trophy me-2"></i>أعلى 20 معدل تراكمي</span>
+                <button class="print-btn" onclick="printCard('topGpaCard')">
+                    <i class="fas fa-print me-1"></i>طباعة
+                </button>
+            </div>
+            <div class="stat-card-body" id="topGpaCard">
+                <div class="loading-spinner">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">جاري التحميل...</span>
+                    </div>
+                </div>
+                <div class="no-data-message">
+                    <i class="fas fa-info-circle fa-2x mb-3"></i>
+                    <h5>لا توجد بيانات متاحة لعرضها</h5>
+                    <p>لم يتم تسجيل أي خريجين بعد أو هناك مشكلة في جلب البيانات</p>
+                </div>
+                <div class="table-responsive d-none">
+                    <table class="table table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>الاسم الرباعي</th>
+                                <th>الكلية/المعهد</th>
+                                <th>المعدل</th>
+                                <th>سنة التخرج</th>
+                                <th>إجراءات</th>
+                            </tr>
+                        </thead>
+                        <tbody id="topGpaTable">
+                            <!-- سيتم ملؤها بالبيانات -->
+                        </tbody>
+                    </table>
+                </div>
+                <div class="chart-container">
+                    <canvas id="topGpaChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- بطاقة التوزيع حسب سنة التخرج -->
+        <div class="stat-card animate__animated animate__fadeIn">
+            <div class="stat-card-header">
+                <span><i class="fas fa-calendar-alt me-2"></i>التوزيع حسب سنة التخرج</span>
+                <button class="print-btn" onclick="printCard('graduationYearCard')">
+                    <i class="fas fa-print me-1"></i>طباعة
+                </button>
+            </div>
+            <div class="stat-card-body" id="graduationYearCard">
+                <div class="loading-spinner">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">جاري التحميل...</span>
+                    </div>
+                </div>
+                <div class="no-data-message">
+                    <i class="fas fa-info-circle fa-2x mb-3"></i>
+                    <h5>لا توجد بيانات متاحة لعرضها</h5>
+                    <p>لم يتم تسجيل أي خريجين بعد أو هناك مشكلة في جلب البيانات</p>
+                </div>
+                <div class="table-responsive d-none">
+                    <table class="table table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>سنة التخرج</th>
+                                <th>عدد الخريجين</th>
+                                <th>النسبة المئوية</th>
+                                <th>إجراءات</th>
+                            </tr>
+                        </thead>
+                        <tbody id="graduationYearTable">
+                            <!-- سيتم ملؤها بالبيانات -->
+                        </tbody>
+                    </table>
+                </div>
+                <div class="chart-container">
+                    <canvas id="graduationYearChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- بطاقة التوزيع حسب الكلية/المعهد -->
+        <div class="stat-card animate__animated animate__fadeIn">
+            <div class="stat-card-header">
+                <span><i class="fas fa-university me-2"></i>التوزيع حسب الكلية/المعهد</span>
+                <button class="print-btn" onclick="printCard('educationCard')">
+                    <i class="fas fa-print me-1"></i>طباعة
+                </button>
+            </div>
+            <div class="stat-card-body" id="educationCard">
+                <div class="loading-spinner">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">جاري التحميل...</span>
+                    </div>
+                </div>
+                <div class="no-data-message">
+                    <i class="fas fa-info-circle fa-2x mb-3"></i>
+                    <h5>لا توجد بيانات متاحة لعرضها</h5>
+                    <p>لم يتم تسجيل أي خريجين بعد أو هناك مشكلة في جلب البيانات</p>
+                </div>
+                <div class="table-responsive d-none">
+                    <table class="table table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>الكلية/المعهد</th>
+                                <th>عدد الخريجين</th>
+                                <th>النسبة المئوية</th>
+                                <th>إجراءات</th>
+                            </tr>
+                        </thead>
+                        <tbody id="educationTable">
+                            <!-- سيتم ملؤها بالبيانات -->
+                        </tbody>
+                    </table>
+                </div>
+                <div class="chart-container">
+                    <canvas id="educationChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- بطاقة البيانات الكاملة -->
+        <div class="stat-card animate__animated animate__fadeIn">
+            <div class="stat-card-header">
+                <span><i class="fas fa-list-alt me-2"></i>قائمة الخريجين الكاملة</span>
+                <button class="print-btn" onclick="printCard('fullDataCard')">
+                    <i class="fas fa-print me-1"></i>طباعة
+                </button>
+            </div>
+            <div class="stat-card-body" id="fullDataCard">
+                <div class="loading-spinner">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">جاري التحميل...</span>
+                    </div>
+                </div>
+                <div class="no-data-message">
+                    <i class="fas fa-info-circle fa-2x mb-3"></i>
+                    <h5>لا توجد بيانات متاحة لعرضها</h5>
+                    <p>لم يتم تسجيل أي خريجين بعد أو هناك مشكلة في جلب البيانات</p>
+                </div>
+                <div class="table-responsive d-none">
+                    <table class="table table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>الاسم الرباعي</th>
+                                <th>الكلية/المعهد</th>
+                                <th>المعدل</th>
+                                <th>سنة التخرج</th>
+                                <th>عنوان السكن</th>
+                                <th>إجراءات</th>
+                            </tr>
+                        </thead>
+                        <tbody id="fullDataTable">
+                            <!-- سيتم ملؤها بالبيانات -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <button class="back-btn" onclick="window.location.href='index1.html'">
+        <i class="fas fa-arrow-left"></i>
+    </button>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-firestore-compat.js"></script>
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
+    <script>
+        // التكوين المشفر لـ Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyDelY9ctu3sfyML_rK0aUtXoRCmRkvZK1U",
+            authDomain: "hareer1wissam.firebaseapp.com",
+            projectId: "hareer1wissam"
+        };
+        
+        // تهيئة Firebase
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
+        const db = firebase.firestore();
+        
+        // متغيرات لتخزين البيانات والمخططات
+        let graduatesData = [];
+        let topGpaChart, graduationYearChart, educationChart;
+        
+        // عرض رسالة عدم وجود بيانات
+        function showNoDataMessage(cardId) {
+            const card = document.getElementById(cardId);
+            if (card) {
+                card.querySelector('.loading-spinner')?.classList.add('d-none');
+                card.querySelector('.table-responsive')?.classList.add('d-none');
+                card.querySelector('.chart-container')?.classList.add('d-none');
+                card.querySelector('.no-data-message').style.display = 'block';
+            }
+        }
+        
+        // إخفاء رسالة عدم وجود بيانات
+        function hideNoDataMessage(cardId) {
+            const card = document.getElementById(cardId);
+            if (card) {
+                card.querySelector('.no-data-message').style.display = 'none';
+            }
+        }
+        
+        // عرض مؤشر التحميل
+        function showLoading() {
+            document.querySelectorAll('.stat-card-body').forEach(body => {
+                body.querySelector('.loading-spinner')?.classList.remove('d-none');
+                body.querySelector('.table-responsive')?.classList.add('d-none');
+                body.querySelector('.chart-container')?.classList.add('d-none');
+                body.querySelector('.no-data-message').style.display = 'none';
+            });
+        }
+        
+        // دالة لحذف الخريج
+        async function deleteGraduate(docId, fullName) {
+            try {
+                const { value: confirm } = await Swal.fire({
+                    title: 'تأكيد الحذف',
+                    text: `هل أنت متأكد من حذف الخريج ${fullName}؟`,
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'نعم، احذف',
+                    cancelButtonText: 'إلغاء',
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    customClass: {
+                        popup: 'animated bounceIn'
+                    }
+                });
+
+                if (confirm) {
+                    await db.collection("graduates").doc(docId).delete();
+                    
+                    Swal.fire({
+                        title: 'تم الحذف!',
+                        text: 'تم حذف بيانات الخريج بنجاح.',
+                        icon: 'success',
+                        timer: 1500,
+                        showConfirmButton: false,
+                        timerProgressBar: true
+                    }).then(() => {
+                        fetchData();
+                    });
+                }
+            } catch (error) {
+                console.error("Error deleting document: ", error);
+                Swal.fire({
+                    title: 'خطأ!',
+                    text: 'حدث خطأ أثناء محاولة الحذف.',
+                    icon: 'error'
+                });
+            }
+        }
+        
+        // جلب البيانات من Firebase
+        function fetchData() {
+            showLoading();
+            
+            db.collection("graduates")
+                .orderBy("timestamp", "desc")
+                .get()
+                .then((querySnapshot) => {
+                    graduatesData = [];
+                    querySnapshot.forEach((doc) => {
+                        const data = doc.data();
+                        // التحقق من وجود الحقول الأساسية
+                        if (data.fullName && data.education && data.graduationYear) {
+                            graduatesData.push({
+                                id: doc.id,
+                                fullName: data.fullName || 'غير معروف',
+                                education: data.education || 'غير محدد',
+                                graduationYear: data.graduationYear || '--',
+                                gpa: data.gpa || '--',
+                                address: data.address || 'غير محدد',
+                                firstName: data.firstName || '',
+                                fatherName: data.fatherName || '',
+                                grandfatherName: data.grandfatherName || '',
+                                greatGrandfatherName: data.greatGrandfatherName || '',
+                                timestamp: data.timestamp || firebase.firestore.FieldValue.serverTimestamp()
+                            });
+                        }
+                    });
+                    
+                    if (graduatesData.length === 0) {
+                        showNoDataMessage('topGpaCard');
+                        showNoDataMessage('graduationYearCard');
+                        showNoDataMessage('educationCard');
+                        showNoDataMessage('fullDataCard');
+                        Swal.fire({
+                            icon: 'info',
+                            title: 'لا توجد بيانات',
+                            text: 'لم يتم تسجيل أي خريجين بعد',
+                            confirmButtonText: 'حسناً'
+                        });
+                        return;
+                    }
+                    
+                    // عرض البيانات بعد جلبها
+                    displayTopGpaData();
+                    displayGraduationYearData();
+                    displayEducationData();
+                    displayFullData();
+                })
+                .catch((error) => {
+                    console.error("Error getting documents: ", error);
+                    showNoDataMessage('topGpaCard');
+                    showNoDataMessage('graduationYearCard');
+                    showNoDataMessage('educationCard');
+                    showNoDataMessage('fullDataCard');
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'حدث خطأ',
+                        text: 'لم يتم جلب البيانات، يرجى المحاولة مرة أخرى',
+                        confirmButtonText: 'حسناً'
+                    });
+                });
+        }
+        
+        // عرض أعلى 20 معدل
+        function displayTopGpaData() {
+            try {
+                // فرز البيانات حسب المعدل (من الأعلى للأدنى)
+                const sortedByGpa = [...graduatesData].sort((a, b) => {
+                    const gpaA = parseFloat(a.gpa) || 0;
+                    const gpaB = parseFloat(b.gpa) || 0;
+                    return gpaB - gpaA;
+                });
+                const top20 = sortedByGpa.slice(0, 20);
+                
+                // ملء الجدول
+                const tableBody = document.getElementById('topGpaTable');
+                tableBody.innerHTML = '';
+                
+                top20.forEach((grad, index) => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${index + 1}</td>
+                        <td>${grad.fullName || 'غير معروف'}</td>
+                        <td>${grad.education || 'غير محدد'}</td>
+                        <td>${grad.gpa || '--'}</td>
+                        <td>${grad.graduationYear || '--'}</td>
+                        <td>
+                            <button class="btn btn-danger btn-delete" 
+                                    onclick="deleteGraduate('${grad.id}', '${grad.fullName}')"
+                                    title="حذف الخريج">
+                                <i class="fas fa-trash-alt"></i> حذف
+                            </button>
+                        </td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+                
+                // إظهار الجدول وإخفاء مؤشر التحميل
+                const cardBody = document.querySelector('#topGpaCard');
+                cardBody.querySelector('.loading-spinner').classList.add('d-none');
+                cardBody.querySelector('.table-responsive').classList.remove('d-none');
+                hideNoDataMessage('topGpaCard');
+                
+                // إنشاء المخطط البياني
+                createTopGpaChart(top20);
+            } catch (error) {
+                console.error("Error displaying top GPA data:", error);
+                showNoDataMessage('topGpaCard');
+            }
+        }
+        
+        // إنشاء مخطط أعلى 20 معدل
+        function createTopGpaChart(data) {
+            try {
+                // التحقق من وجود البيانات أولاً
+                if (!data || data.length === 0) {
+                    document.getElementById('topGpaChart').style.display = 'none';
+                    return;
+                }
+
+                const ctx = document.getElementById('topGpaChart').getContext('2d');
+                
+                // إعداد البيانات مع التحقق من القيم
+                const labels = data.map(grad => {
+                    const nameParts = grad.fullName?.split(' ') || [];
+                    return nameParts.length > 0 ? nameParts[0] + '...' : 'غير معروف';
+                });
+                
+                const gpaValues = data.map(grad => parseFloat(grad.gpa) || 0);
+                
+                const educationColors = data.map(grad => {
+                    const education = grad.education || '';
+                    if (typeof education === 'string' && education.includes('كلية')) return '#3a7bd5';
+                    if (typeof education === 'string' && education.includes('معهد')) return '#00d2ff';
+                    return '#4b6cb7';
+                });
+
+                if (topGpaChart) {
+                    topGpaChart.destroy();
+                }
+                
+                document.getElementById('topGpaChart').style.display = 'block';
+                topGpaChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'المعدل التراكمي',
+                            data: gpaValues,
+                            backgroundColor: educationColors,
+                            borderColor: '#182848',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: false
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    afterLabel: function(context) {
+                                        const grad = data[context.dataIndex];
+                                        return `الكلية: ${grad.education || 'غير محدد'}\nسنة التخرج: ${grad.graduationYear || '--'}`;
+                                    }
+                                }
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                max: 100,
+                                title: {
+                                    display: true,
+                                    text: 'المعدل التراكمي'
+                                }
+                            },
+                            x: {
+                                title: {
+                                    display: true,
+                                    text: 'الخريجون'
+                                }
+                            }
+                        }
+                    }
+                });
+            } catch (error) {
+                console.error("Error creating top GPA chart:", error);
+                document.getElementById('topGpaChart').style.display = 'none';
+            }
+        }
+        
+        // عرض التوزيع حسب سنة التخرج
+        function displayGraduationYearData() {
+            try {
+                // تجميع البيانات حسب سنة التخرج
+                const yearCounts = {};
+                graduatesData.forEach(grad => {
+                    const year = grad.graduationYear || 'غير محدد';
+                    yearCounts[year] = (yearCounts[year] || 0) + 1;
+                });
+                
+                // تحويل إلى مصفوفة وفرز
+                const yearArray = Object.keys(yearCounts).map(year => ({
+                    year,
+                    count: yearCounts[year],
+                    id: graduatesData.find(g => g.graduationYear === year)?.id || ''
+                })).sort((a, b) => b.year - a.year);
+                
+                // حساب النسب المئوية
+                const total = graduatesData.length;
+                yearArray.forEach(item => {
+                    item.percentage = ((item.count / total) * 100).toFixed(1);
+                });
+                
+                // ملء الجدول
+                const tableBody = document.getElementById('graduationYearTable');
+                tableBody.innerHTML = '';
+                
+                yearArray.forEach((item, index) => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${index + 1}</td>
+                        <td>${item.year}</td>
+                        <td>${item.count}</td>
+                        <td>${item.percentage}%</td>
+                        <td>
+                            <button class="btn btn-danger btn-delete" 
+                                    onclick="deleteGraduate('${item.id}', 'خريجي ${item.year}')"
+                                    title="حذف جميع خريجي هذه السنة">
+                                <i class="fas fa-trash-alt"></i> حذف
+                            </button>
+                        </td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+                
+                // إظهار الجدول وإخفاء مؤشر التحميل
+                const cardBody = document.querySelector('#graduationYearCard');
+                cardBody.querySelector('.loading-spinner').classList.add('d-none');
+                cardBody.querySelector('.table-responsive').classList.remove('d-none');
+                hideNoDataMessage('graduationYearCard');
+                
+                // إنشاء المخطط البياني
+                createGraduationYearChart(yearArray);
+            } catch (error) {
+                console.error("Error displaying graduation year data:", error);
+                showNoDataMessage('graduationYearCard');
+            }
+        }
+        
+        // إنشاء مخطط سنة التخرج
+        function createGraduationYearChart(data) {
+            try {
+                // التحقق من وجود البيانات أولاً
+                if (!data || data.length === 0) {
+                    document.getElementById('graduationYearChart').style.display = 'none';
+                    return;
+                }
+
+                const ctx = document.getElementById('graduationYearChart').getContext('2d');
+                
+                // إعداد البيانات للمخطط
+                const labels = data.map(item => item.year);
+                const counts = data.map(item => item.count);
+                
+                if (graduationYearChart) {
+                    graduationYearChart.destroy();
+                }
+                
+                document.getElementById('graduationYearChart').style.display = 'block';
+                graduationYearChart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'عدد الخريجين',
+                            data: counts,
+                            backgroundColor: 'rgba(58, 123, 213, 0.2)',
+                            borderColor: 'rgba(58, 123, 213, 1)',
+                            borderWidth: 2,
+                            tension: 0.4,
+                            fill: true
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: false
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    afterLabel: function(context) {
+                                        const item = data[context.dataIndex];
+                                        return `النسبة: ${item.percentage}%`;
+                                    }
+                                }
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                title: {
+                                    display: true,
+                                    text: 'عدد الخريجين'
+                                }
+                            },
+                            x: {
+                                title: {
+                                    display: true,
+                                    text: 'سنة التخرج'
+                                }
+                            }
+                        }
+                    }
+                });
+            } catch (error) {
+                console.error("Error creating graduation year chart:", error);
+                document.getElementById('graduationYearChart').style.display = 'none';
+            }
+        }
+        
+        // عرض التوزيع حسب الكلية/المعهد
+        function displayEducationData() {
+            try {
+                // تجميع البيانات حسب الكلية/المعهد
+                const educationCounts = {};
+                graduatesData.forEach(grad => {
+                    const education = grad.education || 'غير محدد';
+                    educationCounts[education] = (educationCounts[education] || 0) + 1;
+                });
+                
+                // تحويل إلى مصفوفة وفرز
+                const educationArray = Object.keys(educationCounts).map(edu => ({
+                    education: edu,
+                    count: educationCounts[edu],
+                    id: graduatesData.find(g => g.education === edu)?.id || ''
+                })).sort((a, b) => b.count - a.count);
+                
+                // حساب النسب المئوية
+                const total = graduatesData.length;
+                educationArray.forEach(item => {
+                    item.percentage = ((item.count / total) * 100).toFixed(1);
+                });
+                
+                // ملء الجدول
+                const tableBody = document.getElementById('educationTable');
+                tableBody.innerHTML = '';
+                
+                educationArray.forEach((item, index) => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${index + 1}</td>
+                        <td>${item.education}</td>
+                        <td>${item.count}</td>
+                        <td>${item.percentage}%</td>
+                        <td>
+                            <button class="btn btn-danger btn-delete" 
+                                    onclick="deleteGraduate('${item.id}', 'خريجي ${item.education}')"
+                                    title="حذف جميع خريجي هذا التخصص">
+                                <i class="fas fa-trash-alt"></i> حذف
+                            </button>
+                        </td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+                
+                // إظهار الجدول وإخفاء مؤشر التحميل
+                const cardBody = document.querySelector('#educationCard');
+                cardBody.querySelector('.loading-spinner').classList.add('d-none');
+                cardBody.querySelector('.table-responsive').classList.remove('d-none');
+                hideNoDataMessage('educationCard');
+                
+                // إنشاء المخطط البياني
+                createEducationChart(educationArray);
+            } catch (error) {
+                console.error("Error displaying education data:", error);
+                showNoDataMessage('educationCard');
+            }
+        }
+        
+        // إنشاء مخطط الكلية/المعهد
+        function createEducationChart(data) {
+            try {
+                // التحقق من وجود البيانات أولاً
+                if (!data || data.length === 0) {
+                    document.getElementById('educationChart').style.display = 'none';
+                    return;
+                }
+
+                const ctx = document.getElementById('educationChart').getContext('2d');
+                
+                // إعداد البيانات للمخطط (أعلى 10 فقط)
+                const top10 = data.slice(0, 10);
+                const labels = top10.map(item => {
+                    const edu = item.education || 'غير محدد';
+                    return edu.split(' - ')[0] || edu;
+                });
+                const counts = top10.map(item => item.count);
+                const backgroundColors = [
+                    'rgba(255, 99, 132, 0.7)',
+                    'rgba(54, 162, 235, 0.7)',
+                    'rgba(255, 206, 86, 0.7)',
+                    'rgba(75, 192, 192, 0.7)',
+                    'rgba(153, 102, 255, 0.7)',
+                    'rgba(255, 159, 64, 0.7)',
+                    'rgba(199, 199, 199, 0.7)',
+                    'rgba(83, 102, 255, 0.7)',
+                    'rgba(40, 159, 64, 0.7)',
+                    'rgba(210, 99, 132, 0.7)'
+                ];
+                
+                if (educationChart) {
+                    educationChart.destroy();
+                }
+                
+                document.getElementById('educationChart').style.display = 'block';
+                educationChart = new Chart(ctx, {
+                    type: 'pie',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            data: counts,
+                            backgroundColor: backgroundColors,
+                            borderColor: '#fff',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'right',
+                                rtl: true
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    afterLabel: function(context) {
+                                        const item = top10[context.dataIndex];
+                                        return `النسبة: ${item.percentage}%`;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            } catch (error) {
+                console.error("Error creating education chart:", error);
+                document.getElementById('educationChart').style.display = 'none';
+            }
+        }
+        
+        // عرض البيانات الكاملة
+        function displayFullData() {
+            try {
+                // ملء الجدول
+                const tableBody = document.getElementById('fullDataTable');
+                tableBody.innerHTML = '';
+                
+                graduatesData.forEach((grad, index) => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${index + 1}</td>
+                        <td>${grad.fullName || 'غير معروف'}</td>
+                        <td>${grad.education || 'غير محدد'}</td>
+                        <td>${grad.gpa || '--'}</td>
+                        <td>${grad.graduationYear || '--'}</td>
+                        <td>${grad.address || 'غير محدد'}</td>
+                        <td>
+                            <button class="btn btn-danger btn-delete" 
+                                    onclick="deleteGraduate('${grad.id}', '${grad.fullName}')"
+                                    title="حذف الخريج">
+                                <i class="fas fa-trash-alt"></i> حذف
+                            </button>
+                        </td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+                
+                // إظهار الجدول وإخفاء مؤشر التحميل
+                const cardBody = document.querySelector('#fullDataCard');
+                cardBody.querySelector('.loading-spinner').classList.add('d-none');
+                cardBody.querySelector('.table-responsive').classList.remove('d-none');
+                hideNoDataMessage('fullDataCard');
+            } catch (error) {
+                console.error("Error displaying full data:", error);
+                showNoDataMessage('fullDataCard');
+            }
+        }
+        
+        // طباعة بطاقة محددة
+        function printCard(cardId) {
+            const card = document.getElementById(cardId);
+            if (!card) return;
+            
+            const printContent = card.innerHTML;
+            const originalContent = document.body.innerHTML;
+            
+            document.body.innerHTML = `
+                <div class="container mt-4">
+                    <h2 class="text-center mb-4">${document.querySelector(`#${cardId} .stat-card-header span`)?.textContent || 'إحصائية'}</h2>
+                    ${printContent}
+                    <div class="text-center mt-4">
+                        <small>تم الطباعة في ${new Date().toLocaleString()}</small>
+                    </div>
+                </div>
+            `;
+            
+            window.print();
+            document.body.innerHTML = originalContent;
+        }
+        
+        // جلب البيانات عند تحميل الصفحة
+        document.addEventListener('DOMContentLoaded', fetchData);
+    </script>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
