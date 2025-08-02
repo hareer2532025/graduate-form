@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تسجيل خريج - ناحية العباسي</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            font-family: 'Tajawal', sans-serif;
+        }
+        .form-container {
+            background-color: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            margin-top: 50px;
+            margin-bottom: 50px;
+            padding: 30px;
+        }
+        .form-header {
+            background: linear-gradient(to right, #3a7bd5, #00d2ff);
+            color: white;
+            padding: 20px;
+            border-radius: 15px 15px 0 0;
+            margin: -30px -30px 30px -30px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .form-header h2 {
+            font-weight: 700;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            position: relative;
+            z-index: 2;
+        }
+        .form-header::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="none"><polygon fill="rgba(255,255,255,0.1)" points="0,100 100,0 100,100"/></svg>');
+            background-size: cover;
+            opacity: 0.5;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-label {
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        .form-control, .form-select {
+            border-radius: 10px;
+            padding: 12px 15px;
+            border: 2px solid #e9ecef;
+            transition: all 0.3s;
+        }
+        .form-control:focus, .form-select:focus {
+            border-color: #3a7bd5;
+            box-shadow: 0 0 0 0.25rem rgba(58, 123, 213, 0.25);
+        }
+        .btn-submit {
+            background: linear-gradient(to right, #3a7bd5, #00d2ff);
+            border: none;
+            border-radius: 10px;
+            padding: 12px 30px;
+            font-weight: 600;
+            color: white;
+            width: 100%;
+            margin-top: 10px;
+            transition: all 0.3s;
+        }
+        .btn-submit:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        .name-fields {
+            display: flex;
+            gap: 10px;
+        }
+        .name-fields .form-control {
+            flex: 1;
+        }
+        .footer {
+            background-color: rgba(0, 0, 0, 0.05);
+            padding: 20px 0;
+            text-align: center;
+            border-top: 1px solid rgba(0, 0, 0, 0.1);
+            margin-top: 30px;
+        }
+        .invalid-feedback {
+            display: none;
+            color: #dc3545;
+            font-size: 0.875em;
+        }
+        .is-invalid ~ .invalid-feedback {
+            display: block;
+        }
+        #otherEducationField {
+            display: none;
+            margin-top: 10px;
+        }
+        .declaration-check {
+            display: flex;
+            align-items: center;
+            margin: 20px 0;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 10px;
+            border: 1px solid #dee2e6;
+        }
+        .declaration-check input {
+            margin-left: 10px;
+        }
+        .declaration-check label {
+            margin-bottom: 0;
+            font-weight: 500;
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <div class="container form-container animate__animated animate__fadeIn">
+        <div class="form-header">
+            <h2>استمارة تسجيل الخريج</h2>
+        </div>
+        
+        <form id="graduateForm" novalidate>
+            <div class="form-group">
+                <label class="form-label">الاسم الرباعي:</label>
+                <div class="name-fields">
+                    <div>
+                        <input type="text" class="form-control" id="firstName" placeholder="الاسم الأول" required maxlength="10" pattern="[\u0600-\u06FF]+">
+                        <div class="invalid-feedback">يجب أن يحتوي على أحرف عربية فقط ولا يتجاوز 10 أحرف</div>
+                    </div>
+                    <div>
+                        <input type="text" class="form-control" id="fatherName" placeholder="اسم الأب" required maxlength="10" pattern="[\u0600-\u06FF]+">
+                        <div class="invalid-feedback">يجب أن يحتوي على أحرف عربية فقط ولا يتجاوز 10 أحرف</div>
+                    </div>
+                    <div>
+                        <input type="text" class="form-control" id="grandfatherName" placeholder="اسم الجد" required maxlength="10" pattern="[\u0600-\u06FF]+">
+                        <div class="invalid-feedback">يجب أن يحتوي على أحرف عربية فقط ولا يتجاوز 10 أحرف</div>
+                    </div>
+                    <div>
+                        <input type="text" class="form-control" id="greatGrandfatherName" placeholder="اسم أب الجد" required maxlength="10" pattern="[\u0600-\u06FF]+">
+                        <div class="invalid-feedback">يجب أن يحتوي على أحرف عربية فقط ولا يتجاوز 10 أحرف</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="address" class="form-label">عنوان السكن في ناحية العباسي:</label>
+                <input type="text" class="form-control" id="address" placeholder="مثال: مركز الناحية / حي الزراعة أو ناحية العباسي / قرية السلام" required>
+                <div class="invalid-feedback">يجب إدخال عنوان السكن</div>
+            </div>
+            
+            <div class="form-group">
+                <label for="graduationYear" class="form-label">سنة التخرج:</label>
+                <select class="form-select" id="graduationYear" required>
+                    <option value="" selected disabled>اختر سنة التخرج</option>
+                    <script>
+                        // إنشاء قائمة السنوات من 1980 إلى السنة الحالية + 5 سنوات
+                        const currentYear = new Date().getFullYear();
+                        for (let year = currentYear + 5; year >= 1980; year--) {
+                            document.write(`<option value="${year}">${year}</option>`);
+                        }
+                    </script>
+                </select>
+                <div class="invalid-feedback">يجب اختيار سنة التخرج</div>
+            </div>
+            
+            <div class="form-group">
+                <label for="education" class="form-label">التحصيل الدراسي:</label>
+                <select class="form-select" id="education" required>
+                    <option value="" selected disabled>اختر التحصيل الدراسي</option>
+                    
+                    <!-- الكليات العلمية -->
+                    <optgroup label="الكليات العلمية">
+                        <option value="كلية الطب البيطري">كلية الطب البيطري</option>
+                        <option value="كلية العلوم - علوم الحياة">كلية العلوم - علوم الحياة</option>
+                        <option value="كلية العلوم - الكيمياء">كلية العلوم - الكيمياء</option>
+                        <option value="كلية العلوم - الفيزياء">كلية العلوم - الفيزياء</option>
+                        <option value="كلية العلوم - الجيولوجيا">كلية العلوم - الجيولوجيا</option>
+                        <option value="كلية العلوم - علوم الأرض">كلية العلوم - علوم الأرض</option>
+                        <option value="كلية العلوم - علوم الفلك">كلية العلوم - علوم الفلك</option>
+                        <option value="كلية العلوم - التقانات الأحيائية">كلية العلوم - التقانات الأحيائية</option>
+                        <option value="كلية العلوم - البيئة">كلية العلوم - البيئة</option>
+                        <option value="كلية علوم الحاسوب وتكنولوجيا المعلومات - علوم الحاسبات">كلية علوم الحاسوب وتكنولوجيا المعلومات - علوم الحاسبات</option>
+                        <option value="كلية علوم الحاسوب وتكنولوجيا المعلومات - نظم المعلومات">كلية علوم الحاسوب وتكنولوجيا المعلومات - نظم المعلومات</option>
+                        <option value="كلية علوم الحاسوب وتكنولوجيا المعلومات - الذكاء الاصطناعي">كلية علوم الحاسوب وتكنولوجيا المعلومات - الذكاء الاصطناعي</option>
+                        <option value="كلية علوم الحاسوب وتكنولوجيا المعلومات - أمن المعلومات">كلية علوم الحاسوب وتكنولوجيا المعلومات - أمن المعلومات</option>
+                        <option value="كلية الهندسة - الهندسة المدنية">كلية الهندسة - الهندسة المدنية</option>
+                        <option value="كلية الهندسة - الهندسة الكهربائية">كلية الهندسة - الهندسة الكهربائية</option>
+                        <option value="كلية الهندسة - الهندسة الميكانيكية">كلية الهندسة - الهندسة الميكانيكية</option>
+                        <option value="كلية الهندسة - هندسة الاتصالات">كلية الهندسة - هندسة الاتصالات</option>
+                        <option value="كلية الهندسة - الهندسة الإلكترونية">كلية الهندسة - الهندسة الإلكترونية</option>
+                        <option value="كلية الهندسة - هندسة الحاسوب">كلية الهندسة - هندسة الحاسوب</option>
+                        <option value="كلية الهندسة - هندسة المواد">كلية الهندسة - هندسة المواد</option>
+                        <option value="كلية الهندسة - هندسة الطاقة">كلية الهندسة - هندسة الطاقة</option>
+                        <option value="كلية الهندسة - الهندسة البيئية">كلية الهندسة - الهندسة البيئية</option>
+                        <option value="كلية الهندسة - هندسة النفط">كلية الهندسة - هندسة النفط</option>
+                        <option value="كلية الهندسة - هندسة العمارة">كلية الهندسة - هندسة العمارة</option>
+                        <option value="كلية الهندسة - هندسة الطيران">كلية الهندسة - هندسة الطيران</option>
+                        <option value="كلية الهندسة - هندسة الميكاترونكس">كلية الهندسة - هندسة الميكاترونكس</option>
+                        <option value="كلية العلوم التطبيقية - علوم الفلك والفضاء">كلية العلوم التطبيقية - علوم الفلك والفضاء</option>
+                        <option value="كلية العلوم التطبيقية - علوم الأرض">كلية العلوم التطبيقية - علوم الأرض</option>
+                        <option value="كلية العلوم التطبيقية - التقنيات الإحيائية">كلية العلوم التطبيقية - التقنيات الإحيائية</option>
+                        <option value="كلية العلوم التطبيقية - تحليل مرضي">كلية العلوم التطبيقية - تحليل مرضي</option>
+                    </optgroup>
+                    
+                    <!-- الكليات الإنسانية -->
+                    <optgroup label="الكليات الإنسانية">
+                        <option value="كلية القانون">كلية القانون</option>
+                        <option value="كلية التربية - اللغة العربية">كلية التربية - اللغة العربية</option>
+                        <option value="كلية التربية - اللغة الإنكليزية">كلية التربية - اللغة الإنكليزية</option>
+                        <option value="كلية التربية - التاريخ">كلية التربية - التاريخ</option>
+                        <option value="كلية التربية - الجغرافية">كلية التربية - الجغرافية</option>
+                        <option value="كلية التربية - الرياضيات">كلية التربية - الرياضيات</option>
+                        <option value="كلية التربية - علوم الحياة">كلية التربية - علوم الحياة</option>
+                        <option value="كلية التربية - الكيمياء">كلية التربية - الكيمياء</option>
+                        <option value="كلية التربية - الفيزياء">كلية التربية - الفيزياء</option>
+                        <option value="كلية التربية - الحاسوب">كلية التربية - الحاسوب</option>
+                        <option value="كلية التربية - التربية البدنية">كلية التربية - التربية البدنية</option>
+                        <option value="كلية التربية - التربية الفنية">كلية التربية - التربية الفنية</option>
+                        <option value="كلية التربية - التربية الخاصة">كلية التربية - التربية الخاصة</option>
+                        <option value="كلية التربية - الإرشاد النفسي والتوجيه التربوي">كلية التربية - الإرشاد النفسي والتوجيه التربوي</option>
+                        <option value="كلية الآداب - اللغة العربية">كلية الآداب - اللغة العربية</option>
+                        <option value="كلية الآداب - اللغة الإنكليزية">كلية الآداب - اللغة الإنكليزية</option>
+                        <option value="كلية الآداب - التاريخ">كلية الآداب - التاريخ</option>
+                        <option value="كلية الآداب - الجغرافية">كلية الآداب - الجغرافية</option>
+                        <option value="كلية الآداب - الفلسفة">كلية الآداب - الفلسفة</option>
+                        <option value="كلية الآداب - علم الاجتماع">كلية الآداب - علم الاجتماع</option>
+                        <option value="كلية الآداب - علم النفس">كلية الآداب - علم النفس</option>
+                        <option value="كلية الآداب - الإعلام">كلية الآداب - الإعلام</option>
+                        <option value="كلية الآداب - الآثار">كلية الآداب - الآثار</option>
+                        <option value="كلية الإعلام - الصحافة">كلية الإعلام - الصحافة</option>
+                        <option value="كلية الإعلام - الإذاعة والتلفزيون">كلية الإعلام - الإذاعة والتلفزيون</option>
+                        <option value="كلية الإعلام - العلاقات العامة">كلية الإعلام - العلاقات العامة</option>
+                        <option value="كلية الفنون - المسرح">كلية الفنون - المسرح</option>
+                        <option value="كلية الفنون - الفنون التشكيلية">كلية الفنون - الفنون التشكيلية</option>
+                        <option value="كلية الفنون - التصميم">كلية الفنون - التصميم</option>
+                        <option value="كلية الفنون - السينما">كلية الفنون - السينما</option>
+                        <option value="كلية الفنون - الخط والزخرفة">كلية الفنون - الخط والزخرفة</option>
+                        <option value="كلية الشريعة والدراسات الإسلامية">كلية الشريعة والدراسات الإسلامية</option>
+                        <option value="كلية العلوم الإسلامية">كلية العلوم الإسلامية</option>
+                    </optgroup>
+                    
+                    <!-- الكليات الإدارية والاقتصادية -->
+                    <optgroup label="الكليات الإدارية والاقتصادية">
+                        <option value="كلية الإدارة والاقتصاد - المحاسبة">كلية الإدارة والاقتصاد - المحاسبة</option>
+                        <option value="كلية الإدارة والاقتصاد - الاقتصاد">كلية الإدارة والاقتصاد - الاقتصاد</option>
+                        <option value="كلية الإدارة والاقتصاد - إدارة الأعمال">كلية الإدارة والاقتصاد - إدارة الأعمال</option>
+                        <option value="كلية الإدارة والاقتصاد - الإحصاء">كلية الإدارة والاقتصاد - الإحصاء</option>
+                        <option value="كلية الإدارة والاقتصاد - العلوم المالية والمصرفية">كلية الإدارة والاقتصاد - العلوم المالية والمصرفية</option>
+                        <option value="كلية الإدارة والاقتصاد - إدارة السياحة">كلية الإدارة والاقتصاد - إدارة السياحة</option>
+                        <option value="كلية الإدارة والاقتصاد - إدارة المشاريع">كلية الإدارة والاقتصاد - إدارة المشاريع</option>
+                        <option value="كلية التجارة">كلية التجارة</option>
+                    </optgroup>
+                    
+                    <!-- المعاهد -->
+                    <optgroup label="المعاهد">
+                        <option value="معهد المساحة">معهد المساحة</option>
+                        <option value="معهد الإلكترونيك العام">معهد الإلكترونيك العام</option>
+                        <option value="معهد الصناعات الكيمياوية">معهد الصناعات الكيمياوية</option>
+                        <option value="معهد الري والبزل (الموارد المائية)">معهد الري والبزل (الموارد المائية)</option>
+                        <option value="معهد تشغيل مشاريع المياه">معهد تشغيل مشاريع المياه</option>
+                        <option value="معهد الكهرباء">معهد الكهرباء</option>
+                        <option value="معهد الميكانيك">معهد الميكانيك</option>
+                        <option value="معهد المكائن والمعدات">معهد المكائن والمعدات</option>
+                        <option value="معهد ميكاترونكس">معهد ميكاترونكس</option>
+                        <option value="معهد بناء وإنشاءات">معهد بناء وإنشاءات</option>
+                        <option value="معهد إنشاء طرق">معهد إنشاء طرق</option>
+                        <option value="معهد رسم هندسي">معهد رسم هندسي</option>
+                        <option value="معهد تكنولوجيا المعلومات">معهد تكنولوجيا المعلومات</option>
+                        <option value="معهد إدارة المكتب">معهد إدارة المكتب</option>
+                        <option value="معهد إدارة المواد">معهد إدارة المواد</option>
+                        <option value="معهد الإدارة القانونية">معهد الإدارة القانونية</option>
+                        <option value="معهد المحاسبة">معهد المحاسبة</option>
+                        <option value="معهد أنظمة الحاسبات">معهد أنظمة الحاسبات</option>
+                        <option value="معهد المالية والمصرفية">معهد المالية والمصرفية</option>
+                        <option value="معهد إعداد المدربين">معهد إعداد المدربين</option>
+                        <option value="معهد الإنتاج الميكانيكي – تشغيل وصيانة">معهد الإنتاج الميكانيكي – تشغيل وصيانة</option>
+                        <option value="معهد السياحة والفندقة">معهد السياحة والفندقة</option>
+                        <option value="معهد الإنتاج النباتي">معهد الإنتاج النباتي</option>
+                        <option value="معهد تطوير نظم الحاسبات">معهد تطوير نظم الحاسبات</option>
+                    </optgroup>
+                    
+                    <option value="أخرى">أخرى (حدد التحصيل الدراسي أدناه)</option>
+                </select>
+                <div class="invalid-feedback">يجب اختيار التحصيل الدراسي</div>
+                <input type="text" class="form-control mt-2" id="otherEducationField" placeholder="أدخل التحصيل الدراسي">
+            </div>
+            
+            <div class="form-group">
+                <label for="gpa" class="form-label">المعدل التراكمي:</label>
+                <input type="text" class="form-control" id="gpa" placeholder="أدخل المعدل من 0 إلى 100" required 
+                       pattern="^[0-9]{1,3}$" inputmode="numeric">
+                <div class="invalid-feedback">يجب إدخال معدل تراكمي صحيح بين 0 و 100 (أرقام فقط)</div>
+            </div>
+            
+            <div class="declaration-check">
+                <input type="checkbox" id="declaration" required class="form-check-input">
+                <label for="declaration" class="form-check-label">أتعهد بأن جميع المعلومات المقدمة صحيحة ورسمية</label>
+                <div class="invalid-feedback">يجب الموافقة على التعهد</div>
+            </div>
+            
+            <button type="submit" class="btn btn-submit animate__animated animate__pulse animate__infinite">إرسال البيانات</button>
+        </form>
+        
+        <div class="footer">
+            <p>جميع الحقوق محفوظة © 2025 - ناحية العباسي</p>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-firestore-compat.js"></script>
+    
+    <script>
+        // التكوين المشفر لـ Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyDelY9ctu3sfyML_rK0aUtXoRCmRkvZK1U",
+            authDomain: "hareer1wissam.firebaseapp.com",
+            projectId: "hareer1wissam"
+        };
+        
+        // تهيئة Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        
+        // إنشاء معرف فريد للمستخدم
+        function getUserId() {
+            let userId = localStorage.getItem('graduate_user_id');
+            if (!userId) {
+                userId = 'user_' + Math.random().toString(36).substr(2, 9);
+                localStorage.setItem('graduate_user_id', userId);
+            }
+            return userId;
+        }
+        
+        // التحقق من عدم وجود 6 أحرف متتالية متشابهة
+        function hasSixConsecutiveChars(str) {
+            for (let i = 0; i <= str.length - 6; i++) {
+                const substr = str.substring(i, i + 6);
+                const uniqueChars = new Set(substr);
+                if (uniqueChars.size === 1) {
+                    return true;
+                }
+            }
+            return false;
+        }
+        
+        // التحقق من صحة الاسم
+        function validateName(name) {
+            const arabicRegex = /^[\u0600-\u06FF]+$/;
+            if (!arabicRegex.test(name)) {
+                return false;
+            }
+            if (hasSixConsecutiveChars(name)) {
+                return false;
+            }
+            return true;
+        }
+        
+        // التحكم في حقل "أخرى" للتحصيل الدراسي
+        document.getElementById('education').addEventListener('change', function() {
+            const otherField = document.getElementById('otherEducationField');
+            if (this.value === 'أخرى') {
+                otherField.style.display = 'block';
+                otherField.required = true;
+            } else {
+                otherField.style.display = 'none';
+                otherField.required = false;
+            }
+        });
+        
+        // التحقق من صحة المعدل التراكمي
+        document.getElementById('gpa').addEventListener('input', function() {
+            this.value = this.value.replace(/[^0-9]/g, '');
+            if (parseInt(this.value) > 100) {
+                this.value = '100';
+            }
+        });
+        
+        // معالجة تقديم النموذج
+        document.getElementById('graduateForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const form = e.target;
+            if (!form.checkValidity()) {
+                e.stopPropagation();
+                form.classList.add('was-validated');
+                return;
+            }
+            
+            // التحقق من الأسماء
+            const firstName = document.getElementById('firstName').value;
+            const fatherName = document.getElementById('fatherName').value;
+            const grandfatherName = document.getElementById('grandfatherName').value;
+            const greatGrandfatherName = document.getElementById('greatGrandfatherName').value;
+            
+            if (!validateName(firstName) || !validateName(fatherName) || 
+                !validateName(grandfatherName) || !validateName(greatGrandfatherName)) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'خطأ في الإدخال',
+                    text: 'يجب أن تحتوي الأسماء على أحرف عربية فقط ولا تحتوي على 6 أحرف متتالية متشابهة',
+                    confirmButtonText: 'حسناً'
+                });
+                return;
+            }
+            
+            // التحقق من التعهد
+            if (!document.getElementById('declaration').checked) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'خطأ في الإدخال',
+                    text: 'يجب الموافقة على التعهد بأن المعلومات صحيحة ورسمية',
+                    confirmButtonText: 'حسناً'
+                });
+                return;
+            }
+            
+            // جمع البيانات
+            const fullName = `${firstName} ${fatherName} ${grandfatherName} ${greatGrandfatherName}`;
+            const address = document.getElementById('address').value;
+            const graduationYear = document.getElementById('graduationYear').value;
+            
+            let education = document.getElementById('education').value;
+            if (education === 'أخرى') {
+                education = document.getElementById('otherEducationField').value;
+            }
+            
+            const gpa = document.getElementById('gpa').value;
+            const userId = getUserId();
+            
+            // إرسال البيانات إلى Firebase
+            db.collection("graduates").add({
+                fullName,
+                firstName,
+                fatherName,
+                grandfatherName,
+                greatGrandfatherName,
+                address,
+                graduationYear,
+                education,
+                gpa,
+                userId,
+                timestamp: firebase.firestore.FieldValue.serverTimestamp()
+            })
+            .then(() => {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'تم التسجيل بنجاح',
+                    text: 'شكراً لتسجيلك في استبيان خريجي ناحية العباسي',
+                    confirmButtonText: 'حسناً'
+                }).then(() => {
+                    window.location.href = 'index.html';
+                });
+            })
+            .catch((error) => {
+                console.error("Error adding document: ", error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'حدث خطأ',
+                    text: 'لم يتم حفظ البيانات، يرجى المحاولة مرة أخرى',
+                    confirmButtonText: 'حسناً'
+                });
+            });
+        });
+        
+        // التحقق من الصحة أثناء الكتابة
+        document.querySelectorAll('#firstName, #fatherName, #grandfatherName, #greatGrandfatherName').forEach(input => {
+            input.addEventListener('input', function() {
+                if (this.value.length > 10) {
+                    this.value = this.value.substring(0, 10);
+                }
+            });
+        });
+    </script>
+    
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
